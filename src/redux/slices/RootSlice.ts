@@ -13,7 +13,7 @@ const rootSlice = createSlice({
         Email1: "Parent 1 Email",
         Email2: "Parent 2 Email",
         Address1: "Parent 1 Address",
-        Address2: "Parent 2 Address"
+        Address2: "Parent 2 Address",
     },
     reducers: {
         chooseFirstName: (state, action) => {state.FirstName = action.payload},
@@ -26,7 +26,7 @@ const rootSlice = createSlice({
         chooseEmail1: (state, action) => {state.Email1 = action.payload},
         chooseEmail2: (state, action) => {state.Email2 = action.payload},
         chooseAddress1: (state, action) => {state.Address1 = action.payload},
-        chooseAddress2: (state, action) => {state.Address2 = action.payload}
+        chooseAddress2: (state, action) => {state.Address2 = action.payload},
     }
 })
 

@@ -2,7 +2,6 @@ import Home from '../pages/Home'
 import About from '../pages/About'
 import Directory from '../pages/Directory'
 import Moos from '../pages/Moos'
-import Admin from '../pages/Admin'
 
 interface RouteType {
     path: string,
@@ -34,12 +33,6 @@ const routes: RouteType[] = [
         path: "/Moos",
         component: Moos,
         name: "Moos",
-        protected: false
-    },
-    {
-        path: "/Admin",
-        component: Admin,
-        name: "Admin",
         protected: false
     },
 ];

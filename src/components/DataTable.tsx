@@ -1,25 +1,42 @@
 import { useState } from 'react'
-import Modal from './Modal'
-import { server_calls } from '../api/server'
-import { DataGrid, GridColDef } from '@mui/x-data-grid'
-import { useGetData } from '../custom-hooks/FetchData'
+import Modal from './Modal';
+import { server_calls } from '../api/server';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { useGetData } from '../custom-hooks/FetchData';
+
+// Cloudinary --------------------------------------
+import {Cloudinary} from "@cloudinary/url-gen";
+import {AdvancedImage, lazyload} from '@cloudinary/react';
+import { transformationStringFromObject } from "@cloudinary/url-gen";
+
+  // Cloudinary --------------------------------------
+  const cld = new Cloudinary({
+    cloud: {
+      cloudName: "dmf0ynlth"
+    }
+  });
+  const transformation = transformationStringFromObject([
+    {gravity: "face", height: 150, width: 150, crop: "thumb"},
+    {radius: 100}
+    ]);
 
 
 const columns: GridColDef[] = [
-    {field: 'id', headerName: "ID", width: 90},
-    {field: 'Photo', headerName: "Student", flex: 2},
-    {field: 'FirstName', headerName: "First Name", flex: 2},
-    {field: 'LastName', headerName: "Last Name", flex: 2},
+    // {field: 'id', headerName: "ID", hide: true},
+    {field: 'Photo', headerName: "Student", renderCell: () => 
+        <AdvancedImage cldImg={cld.image('ESC_Qual_Photo_ha5gxj').addTransformation(transformation)} plugins={[lazyload()]} />},
+    {field: 'FirstName', headerName: "First Name", width: 100},
+    {field: 'LastName', headerName: "Last Name", width: 100},
+ 
+    {field: 'Parent1', headerName: "1st Contact", minWidth: 150},
+    {field: 'Phone1', headerName: "1st Phone", width: 100},
+    {field: 'Email1', headerName: "1st Email", minWidth: 150},
+    {field: 'Address1', headerName: "1st Neighborhood", minWidth: 150},
 
-    {field: 'Parent1', headerName: "Primary Contact", flex: 2},
-    {field: 'Phone1', headerName: "Primary Phone", flex: 2},
-    {field: 'Email1', headerName: "Primary Email", flex: 2},
-    {field: 'Address1', headerName: "Primary Neighborhood", flex: 2},
-
-    {field: 'Parent2', headerName: "Secondary Contact", flex: 2},
-    {field: 'Phone2', headerName: "Secondary Phone", flex: 2},
-    {field: 'Email2', headerName: "Secondary Email", flex: 2},
-    {field: 'Address2', headerName: "Secondary Neighborhood", flex: 2},
+    {field: 'Parent2', headerName: "2nd Contact", minWidth: 150},
+    {field: 'Phone2', headerName: "2nd Phone", minWidth: 100},
+    {field: 'Email2', headerName: "2nd Email", minWidth: 150},
+    {field: 'Address2', headerName: "2nd Neighborhood", minWidth: 150}
 ]
 
 function DataTable() {
@@ -62,11 +79,11 @@ function DataTable() {
             <button onClick={handleOpen} className="p-3 bg-slate-300 rounded m-3 hover:bg-slate-800 hover:text-white" >Update</button>
             <button onClick={deleteData} className="p-3 bg-slate-300 rounded m-3 hover:bg-slate-800 hover:text-white" >Delete</button>
         </div>   
-        <div className={ open ? "hidden" : "container mx-10 my-5 flex flex-col"}
-        style={{ height: 700, width: '100%'}}
+        <div className={ open ? "hidden" : "container ml-10 my-5 flex flex-col"}
+        style={{ height: 800}}
         >
             <h2 className="p-3 bg-slate-300 my-2 rounded">Parent Directory</h2>
-            <DataGrid rows={contactData} columns={columns} rowsPerPageOptions={[50]}
+            <DataGrid rows={contactData} columns={columns} rowsPerPageOptions={[50]} rowHeight={70}
             checkboxSelection={true}
             onSelectionModelChange={ (item:any) => {
                 setSelectionModel(item)

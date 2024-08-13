@@ -1,36 +1,65 @@
 import Input from "./Input"
 
-// Photo Upload -----------------------------------------------
-import { useState } from 'react'
-
 import { useForm } from 'react-hook-form'
 import {server_calls } from "../api/server"
 import {useDispatch, useStore} from "react-redux"
 import { chooseFirstName, chooseLastName, choosePhoto, chooseParent1, chooseParent2, choosePhone1, choosePhone2, chooseEmail1, chooseEmail2, 
     chooseAddress1, chooseAddress2 } from "../redux/slices/RootSlice"
 
+// FIREBASE ==============================================================================
+import React, { useEffect, useState } from "react";
+import { imageDb } from "../config/FirebaseConfig";
+import { getDownloadURL, listAll, ref, uploadBytes } from "firebase/storage";
+import { v4 } from "uuid";
+
+
 interface ContactFormProps {
     id?: string[];
     onClose: () => void;
 }
 
-const ContactForm = ( props:ContactFormProps) => {
+const ContactForm = ( props:ContactFormProps ) => {
     const { register, handleSubmit } = useForm({})
     const dispatch = useDispatch();
     const store = useStore();
 
-    // Photo Upload -----------------------------------------------
-    const [file, setFile] = useState<File | undefined>();
+
+// FIREBASE UPLOAD FUNCTIONS -------------------------------------++++++++++++++++++++++++
+
+function FirebaseImageUpload(){
+    const [img,setImg] = useState('')
+    const [imgURL,setImgURL] =useState([])
+
+    const handleClick = () => {
+        if(img !==null){
+            const imgRef = ref(imageDb,`files/${v4()}`)
+            uploadBytes(imgRef,img).then(value=>{
+                console.log(value)
+                getDownloadURL(value.ref).then(url=>{
+                    setImgURL(data=>[...data,url])
+                })
+            })
+        }
+    }
+
+    useEffect(()=>{
+        listAll(ref(imageDb,"files")).then(imgs=>{
+            console.log(imgs)
+            imgs.items.forEach(val=>{
+                getDownloadURL(val).then(url=>{
+                    setImgURL(data=>[...data,url])
+                })
+            })
+        })
+    },[])
+
 
     const onSubmit = (data: any, event: any) => {
         console.log(`ID: ${typeof props.id}`);
         console.log(props.id)
         console.log(data)
-        console.log('file', file)
-        setTimeout(() => {window.location.reload()}, 50000);
 
-        if (typeof file === 'undefined') return;
-
+        // Standard uploads ------------------------------------------ 
         if (props.id && props.id.length > 0) {
             server_calls.update(props.id[0], data)
             console.log(`Updated: ${ data.name } ${ props.id }`)
@@ -50,24 +79,11 @@ const ContactForm = ( props:ContactFormProps) => {
             dispatch(chooseAddress1(data.Address1));
             dispatch(chooseAddress2(data.Address2));
 
-            dispatch(choosePhoto(file));
-
             server_calls.create(store.getState())
-            setTimeout(() => {window.location.reload()}, 1000);
             event.target.reset()
-
             props.onClose();
         }
     }
-
-// Image Upload -------------------------------------------------------------------------------
-
-function handleOnChange(e: React.FormEvent<HTMLInputElement>) {
-    const target = e.target as HTMLInputElement & {
-        files: FileList;
-    }
-    setFile(target.files[0]);
-}
 
   return (
     <div>
@@ -84,8 +100,15 @@ function handleOnChange(e: React.FormEvent<HTMLInputElement>) {
                         <Input {...register('LastName')} name='LastName' placeholder="Student First Name" />
                     </div>
                     <div className="px-3">
-                        <label htmlFor="ImageUpload" className= "flex flex-start mt-2">Insert Photo (150 x 150px)</label>
-                        <input type="file" name="image" className="flex flex-start" onChange={handleOnChange} />
+                            <input type="file" onChange={(e)=>setImg(e.target.files[0])} />
+                            <button onClick={handleClick}>Upload</button>
+                            <br/>
+                            {
+                            imgURL.map(dataVal=><div>
+                                <img src={dataVal} height="200px" width="200px" />
+                                <br/>
+                            </div>)
+                            }
                     </div>
                 </div>
             

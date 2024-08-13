@@ -26,7 +26,7 @@ function Navbar() {
         { name: 'About', href: '/About', current: true },
         { name: 'Directory', href: '/Directory', current: false },
         { name: 'Moos', href: '/Moos', current: false },
-        { name: 'Admin', href: '/Admin', current: false }
+
     ]
 
   return (
