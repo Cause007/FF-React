@@ -1,4 +1,5 @@
-import ContactForm from './ContactForm'
+import React from "react";
+import ContactForm from "./ContactForm"
 
 type Props = {
     id?: string[],
@@ -16,7 +17,7 @@ const Modal = ( props: Props ) => {
                         <p onClick={props.onClose} className="flex justify-start bg-blue-500 ml-2 mt-1 py-1 px-3 rounded hover:bg-orange-700 text-white">X</p>
                     </div>
                     <div className="flex flex-col items-center text-center ">
-                        <ContactForm id={ props.id } onClose={props.onClose} />
+                        <ContactForm id={ props.id } onClose={() => console.log('closed')} />
                     </div>
                 </div>
             </div>

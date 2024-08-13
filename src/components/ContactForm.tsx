@@ -23,10 +23,8 @@ const ContactForm = ( props:ContactFormProps ) => {
     const dispatch = useDispatch();
     const store = useStore();
 
+// FIREBASE UPLOAD FUNCTIONS -------------------------------------
 
-// FIREBASE UPLOAD FUNCTIONS -------------------------------------++++++++++++++++++++++++
-
-function FirebaseImageUpload(){
     const [img,setImg] = useState('')
     const [imgURL,setImgURL] =useState([])
 
@@ -40,7 +38,6 @@ function FirebaseImageUpload(){
                 })
             })
         }
-    }
 
     useEffect(()=>{
         listAll(ref(imageDb,"files")).then(imgs=>{
@@ -52,6 +49,7 @@ function FirebaseImageUpload(){
             })
         })
     },[])
+}
 
 
     const onSubmit = (data: any, event: any) => {
@@ -63,8 +61,7 @@ function FirebaseImageUpload(){
         if (props.id && props.id.length > 0) {
             server_calls.update(props.id[0], data)
             console.log(`Updated: ${ data.name } ${ props.id }`)
-            setTimeout(() => {window.location.reload()}, 1000);
-            props.onClose()
+            // setTimeout(() => {window.location.reload()}, 1000);
             event.target.reset()
         } else {
             dispatch(chooseFirstName(data.FirstName));
@@ -80,6 +77,7 @@ function FirebaseImageUpload(){
             dispatch(chooseAddress2(data.Address2));
 
             server_calls.create(store.getState())
+            // setTimeout(() => {window.location.reload()}, 1000);
             event.target.reset()
             props.onClose();
         }
