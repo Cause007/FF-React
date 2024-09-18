@@ -5,26 +5,26 @@ import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { useGetData } from '../custom-hooks/FetchData';
 
 // Cloudinary --------------------------------------
-import {Cloudinary} from "@cloudinary/url-gen";
-import {AdvancedImage, lazyload} from '@cloudinary/react';
-import { transformationStringFromObject } from "@cloudinary/url-gen";
+// import {Cloudinary} from "@cloudinary/url-gen";
+// import {AdvancedImage, lazyload} from '@cloudinary/react';
+// import { transformationStringFromObject } from "@cloudinary/url-gen";
 
   // Cloudinary --------------------------------------
-  const cld = new Cloudinary({
-    cloud: {
-      cloudName: "dmf0ynlth"
-    }
-  });
-  const transformation = transformationStringFromObject([
-    {gravity: "face", height: 150, width: 150, crop: "thumb"},
-    {radius: 100}
-    ]);
+//   const cld = new Cloudinary({
+//     cloud: {
+//       cloudName: "dmf0ynlth"
+//     }
+//   });
+//   const transformation = transformationStringFromObject([
+//     {gravity: "face", height: 150, width: 150, crop: "thumb"},
+//     {radius: 100}
+//     ]);
 
 
 const columns: GridColDef[] = [
     // {field: 'id', headerName: "ID", hide: true},
-    {field: 'Photo', headerName: "Student", renderCell: () => 
-        <AdvancedImage cldImg={cld.image('ESC_Qual_Photo_ha5gxj').addTransformation(transformation)} plugins={[lazyload()]} />},
+    // {field: 'Photo', headerName: "Student", renderCell: () => 
+    //     <AdvancedImage cldImg={cld.image('ESC_Qual_Photo_ha5gxj').addTransformation(transformation)} plugins={[lazyload()]} />},
     {field: 'FirstName', headerName: "First Name", width: 100},
     {field: 'LastName', headerName: "Last Name", width: 100},
  

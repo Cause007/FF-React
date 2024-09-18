@@ -5,7 +5,7 @@ const rootSlice = createSlice({
     initialState: {
         FirstName: "First Name",
         LastName: "Last Name",
-        Photo: "Student Photo",
+        Photo: "Photo",
         Parent1: "Parent 1 Name",
         Parent2: "Parent 2 Name",
         Phone1: "Parent 1 Phone",
