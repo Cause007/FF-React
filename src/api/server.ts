@@ -15,7 +15,7 @@ export const server_calls = {
         if (!response.ok){
             throw new Error('Failed to fetch data from the server')
         }
-
+        console.log(response)
         return await response.json()
     },
 

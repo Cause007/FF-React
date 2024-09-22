@@ -7,13 +7,6 @@ import {useDispatch, useStore} from "react-redux"
 import { chooseFirstName, chooseLastName, choosePhoto, chooseParent1, chooseParent2, choosePhone1, choosePhone2, chooseEmail1, chooseEmail2, 
     chooseAddress1, chooseAddress2 } from "../redux/slices/RootSlice"
 
-// FIREBASE ==============================================================================
-// import React, { useEffect, useState } from "react";
-// import { imageDb } from "../config/FirebaseConfig";
-// import { getDownloadURL, listAll, ref, uploadBytes } from "firebase/storage";
-// import { v4 } from "uuid";
-
-
 interface ContactFormProps {
     id?: string[];
     onClose: () => void;
@@ -23,34 +16,6 @@ const ContactForm = ( props:ContactFormProps ) => {
     const { register, handleSubmit } = useForm({})
     const dispatch = useDispatch();
     const store = useStore();
-
-// FIREBASE UPLOAD FUNCTIONS -------------------------------------
-
-//     const [img,setImg] = useState('')
-//     const [imgURL,setImgURL] =useState([])
-
-//     const handleClick = () => {
-//         if(img !==null){
-//             const imgRef = ref(imageDb,`files/${v4()}`)
-//             uploadBytes(imgRef,img).then(value=>{
-//                 console.log(value)
-//                 getDownloadURL(value.ref).then(url=>{
-//                     setImgURL(data=>[...data,url])
-//                 })
-//             })
-//         }
-
-//         useEffect(()=>{
-//             listAll(ref(imageDb,"files")).then(imgs=>{
-//                 console.log(imgs)
-//                 imgs.items.forEach(val=>{
-//                     getDownloadURL(val).then(url=>{
-//                         setImgURL(data=>[...data,url])
-//                 })
-//             })
-//         })
-//     },[])
-// }
 
 // Standard uploads ------------------------------------------ 
     const onSubmit = (data: any, event: any) => {
@@ -78,7 +43,7 @@ const ContactForm = ( props:ContactFormProps ) => {
             dispatch(chooseAddress2(data.Address2));
 
             server_calls.create(store.getState())
-            // setTimeout(() => {window.location.reload()}, 1000);
+            setTimeout(() => {window.location.reload()}, 200);
             event.target.reset()
             props.onClose();
         }
@@ -96,23 +61,16 @@ const ContactForm = ( props:ContactFormProps ) => {
                     </div>
                     <div className="px-3">
                         <label htmlFor="LastName" className= "flex flex-start -mb-2 mt-2">Last Name</label>
-                        <Input {...register('LastName')} name='LastName' placeholder="Student First Name" />
+                        <Input {...register('LastName')} name='LastName' placeholder="Student Last Name" />
                     </div>
-                    <div className="px-3 hidden">
-                        <label htmlFor="Photo" className= "flex flex-start -mb-2 mt-2">Photo</label>
-                        <Input {...register('Photo')} name='Photo' placeholder="Student Photo" />
+                    <div className="px-3">
+                        <label htmlFor="Address1" className= "flex flex-start -mb-2 mt-2">Neighborhood</label>
+                        <Input {...register('Address1')} name='Address1' placeholder="Neighborhood" />
                     </div>
-                    {/* <div className="px-3">
-                            <input type="file" onChange={(e)=>setImg(e.target.files[0])} />
-                            <button onClick={handleClick}>Upload</button>
-                            <br/>
-                            {
-                            imgURL.map(dataVal=><div>
-                                <img src={dataVal} height="200px" width="200px" />
-                                <br/>
-                            </div>)
-                            }
-                    </div> */}
+                    <div className="px-3">
+                        <label htmlFor="Photo" className= "flex flex-start -mb-2 mt-2">Photo Hyperlink</label>
+                        <Input {...register('Photo')} name='Photo' placeholder="https:// (paste full path)" />
+                    </div>
                 </div>
             
 {/* Parent 1 */}
@@ -130,10 +88,7 @@ const ContactForm = ( props:ContactFormProps ) => {
                         <label htmlFor="Email1" className= "flex flex-start -mb-2">Preferred Email</label>
                         <Input {...register('Email1')} name='Email1' placeholder="Email" />
                     </div>
-                    <div className="px-3">
-                        <label htmlFor="Address1" className= "flex flex-start -mb-2">Neighborhood</label>
-                        <Input {...register('Address1')} name='Address1' placeholder="Neighborhood" />
-                    </div>
+
                 </div>
 
 {/* Parent 2 */}
@@ -141,18 +96,18 @@ const ContactForm = ( props:ContactFormProps ) => {
             <div className="flex flex-col sm:flex-row justify-center border rounded pt-8 p-2 m-2 text-sm shadow-md bg-white">
                 <div className="px-3">
                     <label htmlFor="Parent2" className= "flex flex-start -mb-2">Full Name</label>
-                    <Input {...register('Parent2')} name='Parent2' placeholder="(optional)" />
+                    <Input {...register('Parent2')} name='Parent2' placeholder="(optional) Full Name" />
                 </div>
                 <div className="px-3">
-                    <label htmlFor="Phone2" className= "flex flex-start -mb-2">Phone Number</label>
+                    <label htmlFor="Phone2" className= "flex flex-start -mb-2">Secondary Phone</label>
                     <Input {...register('Phone2')} name='Phone2' placeholder="(optional)" />
                 </div>
                 <div className="px-3">
-                    <label htmlFor="Email2" className= "flex flex-start -mb-2">Email</label>
+                    <label htmlFor="Email2" className= "flex flex-start -mb-2">Secondary Email</label>
                     <Input {...register('Email2')} name='Email2' placeholder="(optional)" />
                 </div>
-                <div className="px-3">
-                    <label htmlFor="Address2" className= "flex flex-start -mb-2">Neighborhood</label>
+                <div className="px-3 hidden">
+                    <label htmlFor="Address2" className= "flex flex-start -mb-2">Secondary Neighborhood</label>
                     <Input {...register('Address2')} name='Address2' placeholder="(optional)" />
                 </div>
             </div>

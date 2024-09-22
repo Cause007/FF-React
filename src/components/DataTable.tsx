@@ -2,41 +2,32 @@ import { useState } from 'react'
 import Modal from './Modal';
 import { server_calls } from '../api/server';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { Avatar } from '@mui/material';
 import { useGetData } from '../custom-hooks/FetchData';
 
-// Cloudinary --------------------------------------
-// import {Cloudinary} from "@cloudinary/url-gen";
-// import {AdvancedImage, lazyload} from '@cloudinary/react';
-// import { transformationStringFromObject } from "@cloudinary/url-gen";
-
-  // Cloudinary --------------------------------------
-//   const cld = new Cloudinary({
-//     cloud: {
-//       cloudName: "dmf0ynlth"
-//     }
-//   });
-//   const transformation = transformationStringFromObject([
-//     {gravity: "face", height: 150, width: 150, crop: "thumb"},
-//     {radius: 100}
-//     ]);
-
-
 const columns: GridColDef[] = [
-    // {field: 'id', headerName: "ID", hide: true},
-    // {field: 'Photo', headerName: "Student", renderCell: () => 
-    //     <AdvancedImage cldImg={cld.image('ESC_Qual_Photo_ha5gxj').addTransformation(transformation)} plugins={[lazyload()]} />},
-    {field: 'FirstName', headerName: "First Name", width: 100},
-    {field: 'LastName', headerName: "Last Name", width: 100},
- 
-    {field: 'Parent1', headerName: "1st Contact", minWidth: 150},
-    {field: 'Phone1', headerName: "1st Phone", width: 100},
-    {field: 'Email1', headerName: "1st Email", minWidth: 150},
-    {field: 'Address1', headerName: "1st Neighborhood", minWidth: 150},
+    {field: 'Photo', headerName: "", width: 130,
+    renderCell: (params) => {console.log(params); 
+        return(
+          <div>
+            <Avatar src={params.value} sx={{ width: 120, height: 120 }} />
+          </div>
+          );
+        }
+    },
+    {field: 'fullName', headerName: 'Student', width: 160, cellClassName: 'super-app-theme--cell',
+        valueGetter: (value, row) => {
+            return `${row.FirstName || ''} ${row.LastName || ''}`}
+    },
+    {field: 'Address1', headerName: "Neighborhood", minWidth: 150},
+    {field: 'Parent1', headerName: "Primary Contact", minWidth: 150},
+    {field: 'Phone1', headerName: "Phone", width: 150},
+    {field: 'Email1', headerName: "Email", minWidth: 150},
+
 
     {field: 'Parent2', headerName: "2nd Contact", minWidth: 150},
-    {field: 'Phone2', headerName: "2nd Phone", minWidth: 100},
-    {field: 'Email2', headerName: "2nd Email", minWidth: 150},
-    {field: 'Address2', headerName: "2nd Neighborhood", minWidth: 150}
+    {field: 'Phone2', headerName: "Phone", minWidth: 150},
+    {field: 'Email2', headerName: "Email", minWidth: 150}
 ]
 
 function DataTable() {
@@ -58,7 +49,6 @@ function DataTable() {
         console.log(`Selection model: ${selectionModel}`)
         setTimeout( () => {window.location.reload()}, 1000)
     }
-
 
   return (
     <>
@@ -83,9 +73,9 @@ function DataTable() {
         style={{ height: 800}}
         >
             <h2 className="p-3 bg-slate-300 my-2 rounded">Parent Directory</h2>
-            <DataGrid rows={contactData} columns={columns} rowsPerPageOptions={[50]} rowHeight={70}
+            <DataGrid rows={contactData} columns={columns} rowHeight={120}
             checkboxSelection={true}
-            onSelectionModelChange={ (item:any) => {
+            onRowSelectionModelChange={ (item:any) => {
                 setSelectionModel(item)
             }}
             />
