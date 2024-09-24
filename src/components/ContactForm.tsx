@@ -1,6 +1,5 @@
-import { useSubmit } from "react-router-dom"
-import Input from "./Input"
 
+import Input from "./Input"
 import { useForm } from 'react-hook-form'
 import {server_calls } from "../api/server"
 import {useDispatch, useStore} from "react-redux"
@@ -8,9 +7,9 @@ import { chooseFirstName, chooseLastName, choosePhoto, chooseParent1, choosePare
     chooseAddress1, chooseAddress2 } from "../redux/slices/RootSlice"
 
 // FIREBASE ==============================================================================
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import { imageDb } from "../config/FirebaseConfig";
-import { getDownloadURL, listAll, ref, uploadBytes } from "firebase/storage";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { v4 } from "uuid";
 
 
@@ -19,58 +18,43 @@ interface ContactFormProps {
     onClose: () => void;
 }
 
-const ContactForm = ( props:ContactFormProps ) => {
-    const { register, handleSubmit } = useForm({})
+const ContactForm = ( props: ContactFormProps ) => {
+    const { register, handleSubmit } = useForm({});
     const dispatch = useDispatch();
     const store = useStore();
 
 // FIREBASE UPLOAD FUNCTIONS -------------------------------------
 
-    const [img,setImg] = useState('')
-    const [imgUrl,setImgUrl] =useState([])
+    const [img,setImg] = useState<File | null>(null)
+    const [imgUrl,setImgUrl] =useState<string[]>([])
 
-    const handleClick = (e:any) => {
-        e.preventDefault()
-        if(img !==null){
+    const handleClick = async (e:React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        if(img !==null) {
             const imgRef = ref(imageDb,`files/${v4()}`)
-            uploadBytes(imgRef,img).then(value=>{
-                console.log('Uploaded a blob')
-                getDownloadURL(value.ref).then(url=>{
-                    console.log(url)
-                    setImgUrl(data=>[...data,url])
-                })
-            })
-        }
-
-        useEffect(()=>{
-            listAll(ref(imageDb,"files")).then(imgs=>{
-                console.log(imgs)
-                imgs.items.forEach(val=>{
-                    getDownloadURL(val).then(url=>{
-                        setImgUrl(data=>[...data,url])
-                })
-            })
-        })
-    },[])
-    console.log(imgUrl,"Image Url")
-}
+            const uploadResult = await uploadBytes(imgRef,img);
+            const url = await getDownloadURL(uploadResult.ref);
+            console.log('Uploaded and retrieved URL:', url);
+            setImgUrl([url]);
+          }
+        };
 
 // Standard uploads ------------------------------------------ 
     const onSubmit = (data: any, event: any) => {
         console.log(`ID: ${typeof props.id}`);
-        console.log(props.id)
-        console.log(data)
+        console.log(props.id);
+        console.log(data);
 
 
         if (props.id && props.id.length > 0) {
             server_calls.update(props.id[0], data)
-            console.log(`Updated: ${ data.name } ${ props.id }`)
+            console.log(`Updated: ${ data.name } ${ props.id }`);
             setTimeout(() => {window.location.reload()}, 200);
             event.target.reset()
         } else {
             dispatch(chooseFirstName(data.FirstName));
             dispatch(chooseLastName(data.LastName));
-            dispatch(choosePhoto(data.Photo));
+            dispatch(choosePhoto(imgUrl[0] || ""));
             dispatch(chooseParent1(data.Parent1));
             dispatch(chooseParent2(data.Parent2));
             dispatch(choosePhone1(data.Phone1));
@@ -80,48 +64,45 @@ const ContactForm = ( props:ContactFormProps ) => {
             dispatch(chooseAddress1(data.Address1));
             dispatch(chooseAddress2(data.Address2));
 
-            server_calls.create(store.getState())
+            server_calls.create(store.getState());
             setTimeout(() => {window.location.reload()}, 200);
             event.target.reset()
             props.onClose();
         }
-    }
+    };
 
   return (
     <div>
         <form className="max-h-[90vh] overflow-auto" onSubmit={handleSubmit(onSubmit)}>
-            <div className="font-bold text-start rounded -mb-9 pl-2 m-2 underline shadow-md bg-opacity-0">Student Info</div>
-                <div className="flex flex-col sm:flex-row justify-center border rounded pt-8 p-2 m-2 text-sm shadow-md bg-white">
-
-                    <div className="px-3">
-                        <label htmlFor="FirstName" className= "flex flex-start -mb-2 mt-2">First Name</label>
-                        <Input {...register('FirstName')} name='FirstName' placeholder="Student First Name" />
-                    </div>
-                    <div className="px-3">
-                        <label htmlFor="LastName" className= "flex flex-start -mb-2 mt-2">Last Name</label>
-                        <Input {...register('LastName')} name='LastName' placeholder="Student Last Name" />
-                    </div>
-                    <div className="px-3">
-                        <label htmlFor="Address1" className= "flex flex-start -mb-2 mt-2">Neighborhood</label>
-                        <Input {...register('Address1')} name='Address1' placeholder="Neighborhood" />
-                    </div>
-                     <div className="px-3">
-                            <input className="mt-9" type="file" onChange={(e)=>{setImg(e.target.files[0])}} />
-                            <button className="bg-gray-200 rounded px-2 py-0.5 border border-gray-600" onClick={(e) => handleClick(e)}>Upload</button>
-                            <br/>
-                            {
-                            imgUrl.map(dataVal=><div className="flex justify-center">
-                                <img src={dataVal} height="100px" width="100px" />
-                                <br/>
-                                <input className="hidden" {...register('Photo')} name='Photo' value={imgUrl} />
-                            </div>)
-                            }
-                        <div className="px-3 hidden">
-                            <label htmlFor="Photo" className= "flex flex-start -mb-2 mt-2">Photo Hyperlink</label>
-
-                        </div>
-                    </div>
-                </div>
+            <div className="font-bold text-start rounded -mb-9 pl-2 m-2 underline shadow-md bg-opacity-0">
+              Student Info
+            </div>
+            <div className="flex flex-col sm:flex-row justify-center border rounded pt-8 p-2 m-2 text-sm shadow-md bg-white">
+              <div className="px-3">
+                <label htmlFor="FirstName" className= "flex flex-start -mb-2 mt-2">First Name</label>
+                <Input {...register('FirstName')} name='FirstName' placeholder="Student First Name" />
+              </div>
+              <div className="px-3">
+                <label htmlFor="LastName" className= "flex flex-start -mb-2 mt-2">Last Name</label>
+                <Input {...register('LastName')} name='LastName' placeholder="Student Last Name" />
+              </div>
+              <div className="px-3">
+                <label htmlFor="Address1" className= "flex flex-start -mb-2 mt-2">Neighborhood</label>
+                <Input {...register('Address1')} name='Address1' placeholder="Neighborhood" />
+              </div>
+              <div className="px-3">
+                <input className="mt-9" type="file" onChange={(e)=> setImg(e.target.files?.[0] || null)} />
+                <button className="bg-gray-200 rounded px-2 py-0.5 border border-gray-600" onClick={handleClick}>Upload</button>
+                <br/>
+                {imgUrl.map((dataVal, index) => (
+                  <div className="flex justify-center" key={index}>
+                    <img src={dataVal} height="100px" width="100px" alt="Uploaded"/>
+                    <br/>
+                    <input className="hidden" {...register('Photo')} name='Photo' value={dataVal} readOnly />
+                  </div>
+                ))}
+              </div>
+            </div>
             
 {/* Parent 1 */}
             <div className="font-bold text-start rounded -mb-9 pl-2 m-2 underline shadow-md bg-opacity-0">Primary Contact</div>
