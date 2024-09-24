@@ -27,7 +27,7 @@ const routes: RouteType[] = [
         path: "/Directory",
         component: Directory,
         name: "Directory",
-        protected: false
+        protected: true
     },
     {
         path: "/Moos",

@@ -7,7 +7,7 @@ import { useGetData } from '../custom-hooks/FetchData';
 
 const columns: GridColDef[] = [
     {field: 'Photo', headerName: "", width: 130,
-    renderCell: (params) => {console.log(params); 
+    renderCell: (params) => {
         return(
           <div>
             <Avatar src={params.value} sx={{ width: 120, height: 120 }} />
@@ -15,7 +15,7 @@ const columns: GridColDef[] = [
           );
         }
     },
-    {field: 'fullName', headerName: 'Student', width: 160, cellClassName: 'super-app-theme--cell',
+    {field: 'fullName', headerName: 'Student', width: 160,
         valueGetter: (value, row) => {
             return `${row.FirstName || ''} ${row.LastName || ''}`}
     },
@@ -23,7 +23,6 @@ const columns: GridColDef[] = [
     {field: 'Parent1', headerName: "Primary Contact", minWidth: 150},
     {field: 'Phone1', headerName: "Phone", width: 150},
     {field: 'Email1', headerName: "Email", minWidth: 150},
-
 
     {field: 'Parent2', headerName: "2nd Contact", minWidth: 150},
     {field: 'Phone2', headerName: "Phone", minWidth: 150},
@@ -46,8 +45,8 @@ function DataTable() {
     const deleteData = () => {
         server_calls.delete(selectionModel[0]);
         getData();
-        console.log(`Selection model: ${selectionModel}`)
-        setTimeout( () => {window.location.reload()}, 1000)
+        // console.log(`Selection model: ${selectionModel}`)
+        setTimeout( () => {window.location.reload()}, 200)
     }
 
   return (

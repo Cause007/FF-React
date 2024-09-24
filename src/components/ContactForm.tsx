@@ -7,6 +7,13 @@ import {useDispatch, useStore} from "react-redux"
 import { chooseFirstName, chooseLastName, choosePhoto, chooseParent1, chooseParent2, choosePhone1, choosePhone2, chooseEmail1, chooseEmail2, 
     chooseAddress1, chooseAddress2 } from "../redux/slices/RootSlice"
 
+// FIREBASE ==============================================================================
+import React, { useEffect, useState } from "react";
+import { imageDb } from "../config/FirebaseConfig";
+import { getDownloadURL, listAll, ref, uploadBytes } from "firebase/storage";
+import { v4 } from "uuid";
+
+
 interface ContactFormProps {
     id?: string[];
     onClose: () => void;
@@ -16,6 +23,37 @@ const ContactForm = ( props:ContactFormProps ) => {
     const { register, handleSubmit } = useForm({})
     const dispatch = useDispatch();
     const store = useStore();
+
+// FIREBASE UPLOAD FUNCTIONS -------------------------------------
+
+    const [img,setImg] = useState('')
+    const [imgUrl,setImgUrl] =useState([])
+
+    const handleClick = (e:any) => {
+        e.preventDefault()
+        if(img !==null){
+            const imgRef = ref(imageDb,`files/${v4()}`)
+            uploadBytes(imgRef,img).then(value=>{
+                console.log('Uploaded a blob')
+                getDownloadURL(value.ref).then(url=>{
+                    console.log(url)
+                    setImgUrl(data=>[...data,url])
+                })
+            })
+        }
+
+        useEffect(()=>{
+            listAll(ref(imageDb,"files")).then(imgs=>{
+                console.log(imgs)
+                imgs.items.forEach(val=>{
+                    getDownloadURL(val).then(url=>{
+                        setImgUrl(data=>[...data,url])
+                })
+            })
+        })
+    },[])
+    console.log(imgUrl,"Image Url")
+}
 
 // Standard uploads ------------------------------------------ 
     const onSubmit = (data: any, event: any) => {
@@ -67,9 +105,21 @@ const ContactForm = ( props:ContactFormProps ) => {
                         <label htmlFor="Address1" className= "flex flex-start -mb-2 mt-2">Neighborhood</label>
                         <Input {...register('Address1')} name='Address1' placeholder="Neighborhood" />
                     </div>
-                    <div className="px-3">
-                        <label htmlFor="Photo" className= "flex flex-start -mb-2 mt-2">Photo Hyperlink</label>
-                        <Input {...register('Photo')} name='Photo' placeholder="https:// (paste full path)" />
+                     <div className="px-3">
+                            <input className="mt-9" type="file" onChange={(e)=>{setImg(e.target.files[0])}} />
+                            <button className="bg-gray-200 rounded px-2 py-0.5 border border-gray-600" onClick={(e) => handleClick(e)}>Upload</button>
+                            <br/>
+                            {
+                            imgUrl.map(dataVal=><div className="flex justify-center">
+                                <img src={dataVal} height="100px" width="100px" />
+                                <br/>
+                                <input className="hidden" {...register('Photo')} name='Photo' value={imgUrl} />
+                            </div>)
+                            }
+                        <div className="px-3 hidden">
+                            <label htmlFor="Photo" className= "flex flex-start -mb-2 mt-2">Photo Hyperlink</label>
+
+                        </div>
                     </div>
                 </div>
             
