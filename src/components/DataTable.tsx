@@ -17,6 +17,7 @@ const columns: GridColDef[] = [
     },
     {field: 'fullName', headerName: 'Student', width: 160,
         valueGetter: (value, row) => {
+            console.log(value);
             return `${row.FirstName || ''} ${row.LastName || ''}`}
     },
     {field: 'Address1', headerName: "Neighborhood", minWidth: 150},
